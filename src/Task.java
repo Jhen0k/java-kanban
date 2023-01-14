@@ -1,10 +1,12 @@
+import java.util.ArrayList;
+
 public abstract class Task {
     private final int id;
     private final String name;
     private final String description;
 
 
-    public Task(Integer id, String name, String description) {
+    protected Task(Integer id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -23,9 +25,9 @@ public abstract class Task {
         return description;
     }
 
-    public void setId(int id) {
+    public void setId(int id) throws GetIdException{
 
-        throw new RuntimeException();
+        throw new GetIdException();
     }
 
     public abstract Status getStatus();

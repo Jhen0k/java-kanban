@@ -6,10 +6,10 @@ public class SingleTask extends Task {
         this.status = status;
     }
 
-    public SingleTask withNewName(String name) {
+    public SingleTask withNewStatus(Status status) {
         return new SingleTask(
                 this.getId(),
-                name,
+                this.getName(),
                 this.getDescription(),
                 status
         );

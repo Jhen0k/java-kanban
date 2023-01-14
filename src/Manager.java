@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Manager {
+public class Manager implements GetAllTaskAndId{
     private final TaskIdGenerator taskIdGenerator;
 
     private final HashMap<Integer, Task> taskById;
@@ -87,14 +87,6 @@ public class Manager {
         ArrayList<Task> tasks = new ArrayList<>();
         for (Task task : this.taskById.values()) {
             tasks.add(task);
-        }
-        return tasks;
-    }
-
-    public ArrayList<Task> getTasksById(List<Integer> taskIds) {
-        ArrayList<Task> tasks = new ArrayList<>();
-        for (int id : taskIds) {
-            tasks.add(this.taskById.get(id));
         }
         return tasks;
     }
