@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package Tasks;
+import Exception.GetIdException;
 
 public abstract class Task {
     private final int id;
@@ -25,7 +26,7 @@ public abstract class Task {
         return description;
     }
 
-    public void setId(int id) throws GetIdException{
+    public void setId(int id) throws GetIdException {
 
         throw new GetIdException();
     }

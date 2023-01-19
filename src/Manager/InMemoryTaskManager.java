@@ -1,15 +1,41 @@
+package Manager;
+import Tasks.Task;
+import Tasks.SingleTask;
+import Tasks.SubTask;
+import Tasks.Epic;
+import Tasks.Status;
+import Tasks.Type;
+
 import java.util.*;
 
-public class Manager implements GetAllTaskAndId{
+
+public class InMemoryTaskManager implements TaskManager {
     private final TaskIdGenerator taskIdGenerator;
 
     private final HashMap<Integer, Task> taskById;
 
-    public Manager() {
+    private final List<Integer> historyTaskIds = new ArrayList<>();
+
+    private final InMemoryHistoryManager inMemoryHistoryManager;
+
+    public InMemoryTaskManager(InMemoryHistoryManager inMemoryHistoryManager) {
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
         this.taskIdGenerator = new TaskIdGenerator();
         this.taskById = new HashMap<>();
     }
 
+    @Override
+    public List<Task> getHistory() {
+        List<Task> historyTasks = new ArrayList<>();
+        for (Task task : inMemoryHistoryManager.getHistory()) {
+            if (taskById.containsKey(task.getId())) {
+                historyTasks.add(taskById.get(task.getId()));
+            }
+        }
+        return Collections.unmodifiableList(historyTasks);
+    }
+
+    @Override
     public void saveNewTask(SingleTask.ToCreateName singleTaskToCreateName) {
         int nextFreeId = taskIdGenerator.getNextFreeId();
 
@@ -23,6 +49,7 @@ public class Manager implements GetAllTaskAndId{
         taskById.put(singleTask.getId(), singleTask);
     }
 
+    @Override
     public void saveNewEpicTask(Epic.ToCreateEpicTaskName epicToCreateEpicTaskName) {
         int nextFreeId = taskIdGenerator.getNextFreeId();
 
@@ -36,6 +63,7 @@ public class Manager implements GetAllTaskAndId{
         taskById.put(epic.getId(), epic);
     }
 
+    @Override
     public void saveNewSubTask(SubTask.ToCreateSubTaskName subToCreateSubTaskName, int epicId) {
         int nextFreeId = taskIdGenerator.getNextFreeId();
 
@@ -52,10 +80,12 @@ public class Manager implements GetAllTaskAndId{
         epic.getSubtasks().add(subTask);
     }
 
+    @Override
     public void updateTask(int id, Task task) {
         taskById.put(id, task);
     }
 
+    @Override
     public void updateStatusTask(Task task) {
         Type type = (Type) task.getType();
         if (!Type.SUB.equals(type)) {
@@ -66,35 +96,38 @@ public class Manager implements GetAllTaskAndId{
 
     }
 
+    @Override
     public void updateEpicStatus(SubTask subTask) {
         taskById.put(subTask.getId(), subTask);
         int id = subTask.getEpic().getId();
         Epic epic = (Epic) taskById.get(id);
-        Status status = subTask.getStatus();
 
-        if (Status.IN_PROGRESS.equals(status)) {
-            updateStatusTask(epic.withNewStatus(status));
-        } else if (Status.DONE.equals(status)) {
+        if (Status.IN_PROGRESS.equals(subTask.getStatus())) {
+            updateStatusTask(epic.withNewStatus(subTask.getStatus()));
+        } else if (Status.DONE.equals(subTask.getStatus())) {
             if (epic.viewTasksOnDone()) {
-                updateStatusTask(epic.withNewStatus(status));
+                updateStatusTask(epic.withNewStatus(subTask.getStatus()));
             } else {
                 updateStatusTask(epic.withNewStatus(Status.IN_PROGRESS));
             }
         }
     }
 
-    public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
+    @Override
+    public List<Task> getAllTasks() {
+        List<Task> tasks = new ArrayList<>();
         for (Task task : this.taskById.values()) {
             tasks.add(task);
         }
         return tasks;
     }
 
+    @Override
     public void printTask(int taskId) {
         System.out.println(taskById.get(taskId).getName());
     }
 
+    @Override
     public void printAllTaskOneEpic(int epicId) {
         Epic epic = (Epic) taskById.get(epicId);
 
@@ -103,6 +136,7 @@ public class Manager implements GetAllTaskAndId{
         }
     }
 
+    @Override
     public void printListAllTasks() {
         for (Task task : getAllTasks()) {
             System.out.print(task.getName() + ", ");
@@ -110,10 +144,12 @@ public class Manager implements GetAllTaskAndId{
         System.out.print("\n");
     }
 
+    @Override
     public void clearAllTask() {
         taskById.clear();
     }
 
+    @Override
     public void removeTask(int id) {
         if (Type.SUB.equals(taskById.get(id).getType())) {
             SubTask subTask = (SubTask) taskById.get(id);
@@ -141,7 +177,9 @@ public class Manager implements GetAllTaskAndId{
         }
     }
 
+    @Override
     public Task getTaskById(int id) {
+        inMemoryHistoryManager.add(taskById.get(id));
         return taskById.get(id);
     }
 

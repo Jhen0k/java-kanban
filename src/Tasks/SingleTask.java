@@ -1,6 +1,8 @@
+package Tasks;
+
+
 public class SingleTask extends Task {
     private final Status status;
-
     public SingleTask(int id, String name, String description, Status status) {
         super(id, name, description);
         this.status = status;
@@ -29,7 +31,7 @@ public class SingleTask extends Task {
 
     @Override
     public String toString() {
-        return "SingleTask{" +
+        return "Tasks.SingleTask{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +

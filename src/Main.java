@@ -1,47 +1,55 @@
+import Manager.Managers;
+import Manager.TaskManager;
+import Tasks.Epic;
+import Tasks.Status;
+import Tasks.SubTask;
 
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        TaskManager taskManager = Managers.getDefault();
 
-        manager.saveNewEpicTask(new Epic.ToCreateEpicTaskName("Покупки", "Список продуктов"));
-        manager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Молочка", "Купить молоко, кефир, сметану, творог"),
+        taskManager.saveNewEpicTask(new Epic.ToCreateEpicTaskName("Покупки", "Список продуктов"));
+        System.out.println(taskManager.getTaskById(0));
+        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Молочка", "Купить молоко, кефир, сметану, творог"),
                 0);
-        manager.saveNewEpicTask(new Epic.ToCreateEpicTaskName("Переезд",
+        taskManager.saveNewEpicTask(new Epic.ToCreateEpicTaskName("Переезд",
                 "Погрузка всех вещей"));
-        manager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка мебели", "Погрузить диван и шкафы"), 2);
-        SubTask subTask2 = (SubTask) manager.getTaskById(3);
-        manager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка вещей", "Погрузить одежду и ковры"), 2);
-        SubTask subTask3 = (SubTask) manager.getTaskById(4);
-        manager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Уборать в квартире", "Убрать комнату, убрать зал, " +
+        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка мебели", "Погрузить диван и шкафы"), 2);
+        SubTask subTask2 = (SubTask) taskManager.getTaskById(3);
+        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка вещей", "Погрузить одежду и ковры"), 2);
+        SubTask subTask3 = (SubTask) taskManager.getTaskById(4);
+        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Уборать в квартире", "Убрать комнату, убрать зал, " +
                 "убрать на кухне"), 2);
 
-        System.out.println(manager.getTaskById(0));
-        System.out.println(manager.getTaskById(0));
-        manager.printAllTaskOneEpic(2);
-        manager.removeTask(5);
-        manager.printAllTaskOneEpic(2);
-        manager.printListAllTasks();
 
-        System.out.println(manager.getTaskById(0));
-        System.out.println(manager.getTaskById(1));
-        System.out.println(manager.getTaskById(2));
-        System.out.println(manager.getTaskById(3));
-        System.out.println(manager.getTaskById(4));
+        taskManager.printAllTaskOneEpic(2);
+        taskManager.removeTask(5);
+        taskManager.printAllTaskOneEpic(2);
+        taskManager.printListAllTasks();
+
+        System.out.println(taskManager.getTaskById(0));
+        System.out.println(taskManager.getTaskById(1));
+        System.out.println(taskManager.getTaskById(2));
+        System.out.println(taskManager.getTaskById(3));
+        System.out.println(taskManager.getTaskById(4));
         System.out.println(" ");
 
-        manager.updateStatusTask(subTask2.withStatus(Status.DONE));
-        manager.updateStatusTask(subTask3.withStatus(Status.IN_PROGRESS));
+        taskManager.updateStatusTask(subTask2.withStatus(Status.DONE));
+        taskManager.updateStatusTask(subTask3.withStatus(Status.IN_PROGRESS));
 
-        System.out.println(manager.getTaskById(0));
-        System.out.println(manager.getTaskById(1));
-        System.out.println(manager.getTaskById(2));
-        System.out.println(manager.getTaskById(3));
-        System.out.println(manager.getTaskById(4));
+        System.out.println(taskManager.getTaskById(0));
+        System.out.println(taskManager.getTaskById(1));
+        System.out.println(taskManager.getTaskById(2));
+        System.out.println(taskManager.getTaskById(3));
+        System.out.println(taskManager.getTaskById(4));
 
-        manager.printListAllTasks();
-        manager.removeTask(0);
-        manager.printListAllTasks();
+        taskManager.printListAllTasks();
+        taskManager.removeTask(0);
+        taskManager.printListAllTasks();
+
+        System.out.println(taskManager.getTaskById(2));
+        System.out.println("Печать истории" + taskManager.getHistory());
 
 
     }

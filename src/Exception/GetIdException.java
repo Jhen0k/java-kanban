@@ -1,3 +1,5 @@
+package Exception;
+
 public class GetIdException extends Exception{
 
     public GetIdException() {
