@@ -1,4 +1,6 @@
-package Tasks;
+package tasks;
+import Enum.Status;
+import Enum.Type;
 
 
 public class SingleTask extends Task {
@@ -31,7 +33,7 @@ public class SingleTask extends Task {
 
     @Override
     public String toString() {
-        return "Tasks.SingleTask{" +
+        return "tasks.SingleTask{" +
                 "id=" + getId() +
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +

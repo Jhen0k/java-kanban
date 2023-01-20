@@ -1,4 +1,6 @@
-package Tasks;
+package tasks;
+import Enum.Status;
+import Enum.Type;
 
 public class SubTask extends Task {
     private final Status status;
@@ -59,7 +61,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "Tasks.SubTask{"
+        return "tasks.SubTask{"
                 + "id= " + getId()
                 + ", name= " + getName() + " "
                 + ", description= " + getDescription() + " "

@@ -1,10 +1,12 @@
-package Manager;
-import Tasks.Task;
-import Tasks.SingleTask;
-import Tasks.SubTask;
-import Tasks.Epic;
-import Tasks.Status;
-import Tasks.Type;
+package manager;
+
+import manager.hisory.InMemoryHistoryManager;
+import tasks.Task;
+import tasks.SingleTask;
+import tasks.SubTask;
+import tasks.Epic;
+import Enum.Status;
+import Enum.Type;
 
 import java.util.*;
 

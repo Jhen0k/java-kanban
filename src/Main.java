@@ -1,8 +1,9 @@
-import Manager.Managers;
-import Manager.TaskManager;
-import Tasks.Epic;
-import Tasks.Status;
-import Tasks.SubTask;
+import manager.Managers;
+import manager.TaskManager;
+import tasks.Epic;
+import Enum.Status;
+import tasks.SubTask;
+
 
 public class Main {
 

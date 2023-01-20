@@ -1,5 +1,5 @@
-package Manager;
-import Tasks.Task;
+package manager.hisory;
+import tasks.Task;
 
 import java.util.List;
 

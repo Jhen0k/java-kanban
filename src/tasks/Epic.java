@@ -1,4 +1,6 @@
-package Tasks;
+package tasks;
+import Enum.Status;
+import Enum.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -69,7 +71,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Tasks.Epic{" +
+        return "tasks.Epic{" +
                 "id=" + getId() + "," +
                 " name= " + getName() + "," +
                 " description= " + getDescription() + "," +

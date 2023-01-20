@@ -1,5 +1,7 @@
-package Tasks;
-import Exception.GetIdException;
+package tasks;
+import exception.GetIdException;
+import Enum.Status;
+import Enum.Type;
 
 public abstract class Task {
     private final int id;

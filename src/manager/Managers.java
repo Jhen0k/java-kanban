@@ -1,4 +1,7 @@
-package Manager;
+package manager;
+
+import manager.hisory.HistoryManager;
+import manager.hisory.InMemoryHistoryManager;
 
 // Патер singleton
 // Сайт refactoring.guru
@@ -6,7 +9,7 @@ public class Managers {
     private static InMemoryHistoryManager inMemoryHistoryManager;
     private static InMemoryTaskManager inMemoryTaskManager;
 
-    public static HistoryManager getDefaultHistory() {
+    private static HistoryManager getDefaultHistory() {
         if (inMemoryHistoryManager == null) {
             inMemoryHistoryManager = new InMemoryHistoryManager();
         }
