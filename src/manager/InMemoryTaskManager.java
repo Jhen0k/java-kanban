@@ -167,6 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
                 for (Task task1 : tasks) {
                     if (task.getName() == task1.getName()) {
                         taskById.remove(count);
+                        inMemoryHistoryManager.remove(count);
                     }
 
                 }
@@ -174,6 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epic.clearTask();
             taskById.remove(id);
+            inMemoryHistoryManager.remove(id);
         } else {
             taskById.remove(id);
         }
