@@ -52,7 +52,7 @@ public class SubTask extends Task {
 
     @Override
     public Type getType() {
-        return Type.SUB;
+        return Type.SUBTASK;
     }
 
     public Epic getEpicName() {
@@ -61,12 +61,11 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "tasks.SubTask{"
-                + "id= " + getId()
-                + ", name= " + getName() + " "
-                + ", description= " + getDescription() + " "
-                + ", status= " + getStatus() + " "
-                + ", epicName= " + epic.getName() + " " +
-                '}';
+        return getId() + "," +
+                Type.SUBTASK + "," +
+                getName() + "," +
+                getStatus() + "," +
+                getDescription() + "," +
+                epic.getId() + ",";
     }
 }

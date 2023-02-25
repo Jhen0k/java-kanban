@@ -34,14 +34,20 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-
+        if (historyTask.size == 0) {
+            return null;
+        }
         return historyTask.getTasks();
+    }
+
+    public boolean isEmpty() {
+        return historyTask.size == 0;
     }
 
     final static class CustomLinkedList<E> {
         private Node<E> head;
         private Node<E> tail;
-        public int size = 0;
+        private int size = 0;
 
         private CustomLinkedList() {
             this.head = null;
@@ -50,7 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         private Node<E> linkLast(E element) {
             Node<E> t = tail;
-            Node<E>newNode = new Node<>(t, element, null);
+            Node<E> newNode = new Node<>(t, element, null);
             tail = newNode;
             if (t == null) {
                 head = newNode;
@@ -66,10 +72,10 @@ public class InMemoryHistoryManager implements HistoryManager {
             Node<E> currentElement = head;
 
             List<E> resulted = new LinkedList<>();
-            resulted.add( currentElement.element);
+            resulted.add(currentElement.element);
             while (currentElement != tail) {
                 currentElement = currentElement.next;
-                resulted.add( currentElement.element);
+                resulted.add(currentElement.element);
             }
             return resulted;
         }
@@ -100,7 +106,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node<E> next;
         E element;
 
-        Node(Node<E> prev ,E element, Node<E> next) {
+        Node(Node<E> prev, E element, Node<E> next) {
             this.prev = prev;
             this.next = next;
             this.element = element;

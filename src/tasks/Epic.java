@@ -71,12 +71,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "tasks.Epic{" +
-                "id=" + getId() + "," +
-                " name= " + getName() + "," +
-                " description= " + getDescription() + "," +
-                " status= " + getStatus() + "," +
-                '}';
+        return  getId() + "," +
+                Type.EPIC + "," +
+                getName() + "," +
+                getStatus() + "," +
+                getDescription() + ",";
     }
 
     public static class ToCreateEpicTaskName {

@@ -28,17 +28,16 @@ public class SingleTask extends Task {
     @Override
     public Type getType() {
 
-        return Type.SINGLE;
+        return Type.TASK;
     }
 
     @Override
     public String toString() {
-        return "tasks.SingleTask{" +
-                "id=" + getId() +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", status='" + getStatus() + '\'' +
-                '}';
+        return getId() + "," +
+                Type.TASK + "," +
+                getName() + "," +
+                getStatus() + "," +
+                getDescription() + ",";
     }
 
     public static class ToCreateName {

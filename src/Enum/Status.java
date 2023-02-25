@@ -1,4 +1,4 @@
-package Enum;
+package Enum; // Не могу переиминовать в lowerCamelCase выдает ошибку "enum" is not an identifier
 
 public enum Status {
     NEW,

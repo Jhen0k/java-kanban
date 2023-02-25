@@ -1,7 +1,7 @@
-package Enum;
+package Enum;  // C
 
 public enum Type {
-    SINGLE,
+    TASK,
     EPIC,
-    SUB
+    SUBTASK
 }

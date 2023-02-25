@@ -21,8 +21,6 @@ public interface TaskManager {
 
     void updateStatusTask(Task task);
 
-    void updateEpicStatus(SubTask subTask);
-
     List<Task> getAllTasks();
 
     void printTask(int taskId);
