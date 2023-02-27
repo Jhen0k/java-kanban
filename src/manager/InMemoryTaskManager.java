@@ -5,8 +5,8 @@ import tasks.Task;
 import tasks.SingleTask;
 import tasks.SubTask;
 import tasks.Epic;
-import Enum.Status;
-import Enum.Type;
+import enums.Status;
+import enums.Type;
 
 import java.util.*;
 

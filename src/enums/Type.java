@@ -1,4 +1,4 @@
-package Enum;  // C
+package enums;  // C
 
 public enum Type {
     TASK,

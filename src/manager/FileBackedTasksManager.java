@@ -1,5 +1,6 @@
 package manager;
 
+import exception.FileBackedException;
 import manager.hisory.InMemoryHistoryManager;
 import tasks.Epic;
 import tasks.SingleTask;
@@ -12,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path path;
@@ -90,23 +90,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 writer.write("\n" + historyToString(getHistory()));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileBackedException(e.getMessage());
         }
     }
 
     public void fromString(String value) {
         String[] task = value.split(",");
         switch (task[1]) {
-            case "TASK":
-                saveNewTask(new SingleTask.ToCreateName(task[2], task[4]));
-                break;
-            case "EPIC":
-                saveNewEpicTask(new Epic.ToCreateEpicTaskName(task[2], task[4]));
-                break;
-            case "SUBTASK":
+            case "TASK" -> saveNewTask(new SingleTask.ToCreateName(task[2], task[4]));
+            case "EPIC" -> saveNewEpicTask(new Epic.ToCreateEpicTaskName(task[2], task[4]));
+            case "SUBTASK" -> {
                 int id = Integer.parseInt(task[5]);
                 saveNewSubTask(new SubTask.ToCreateSubTaskName(task[2], task[4]), id);
-                break;
+            }
+            default -> System.out.println("Отсутствует тип задачи!");
         }
     }
 

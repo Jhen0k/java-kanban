@@ -1,6 +1,6 @@
 package tasks;
-import Enum.Status;
-import Enum.Type;
+import enums.Status;
+import enums.Type;
 
 import java.util.ArrayList;
 import java.util.Iterator;

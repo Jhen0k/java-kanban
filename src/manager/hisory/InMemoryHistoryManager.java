@@ -44,7 +44,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return historyTask.size == 0;
     }
 
-    final static class CustomLinkedList<E> {
+    static final class CustomLinkedList<E> {
         private Node<E> head;
         private Node<E> tail;
         private int size = 0;

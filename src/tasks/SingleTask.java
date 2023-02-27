@@ -1,6 +1,6 @@
 package tasks;
-import Enum.Status;
-import Enum.Type;
+import enums.Status;
+import enums.Type;
 
 
 public class SingleTask extends Task {

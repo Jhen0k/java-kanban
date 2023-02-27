@@ -14,6 +14,10 @@ public class Managers {
     private static InMemoryTaskManager inMemoryTaskManager;
     private static FileBackedTasksManager fileBackedTasksManager;
 
+    private Managers() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static HistoryManager getDefaultHistory() {
         if (inMemoryHistoryManager == null) {
             inMemoryHistoryManager = new InMemoryHistoryManager();
