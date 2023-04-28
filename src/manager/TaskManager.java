@@ -3,25 +3,25 @@ package manager;
 import java.util.List;
 
 import tasks.Task;
+import tasks.Tasks;
 import tasks.SubTask;
 import tasks.Epic;
-import tasks.SingleTask;
 
 public interface TaskManager {
 
-    List<Task> getHistory();
+    List<Tasks> getHistory();
 
-    void saveNewTask(SingleTask.ToCreateName singleTaskToCreateName);
+    int addNewTask(Task task);
 
-    void saveNewEpicTask(Epic.ToCreateEpicTaskName epicToCreateEpicTaskName);
+    int addNewEpicTask(Epic epic);
 
-    void saveNewSubTask(SubTask.ToCreateSubTaskName subToCreateSubTaskName, int epicId);
+    void addNewSubTask(SubTask subTask);
 
-    void updateTask(int id, Task task);
+    void updateTask(int id, Tasks tasks);
 
-    void updateStatusTask(Task task);
+    void updateStatusTask(Tasks tasks);
 
-    List<Task> getAllTasks();
+    List<Tasks> getAllTasks();
 
     void printTask(int taskId);
 
@@ -33,5 +33,7 @@ public interface TaskManager {
 
     void removeTask(int id);
 
-    Task getTaskById(int id);
+    Tasks getTaskById(int id);
+
+    int getTaskByName(String name);
 }

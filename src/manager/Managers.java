@@ -18,7 +18,7 @@ public class Managers {
         throw new IllegalStateException("Utility class");
     }
 
-    private static HistoryManager getDefaultHistory() {
+    public static HistoryManager getDefaultHistory() {
         if (inMemoryHistoryManager == null) {
             inMemoryHistoryManager = new InMemoryHistoryManager();
         }

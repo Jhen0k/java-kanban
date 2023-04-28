@@ -1,41 +1,60 @@
 package tasks;
-import exception.GetIdException;
 import enums.Status;
 import enums.Type;
 
-public abstract class Task {
-    private final int id;
-    private final String name;
-    private final String description;
 
-
-    protected Task(Integer id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+public class Task extends Tasks {
+    private final Status status;
+    public Task(String name, String description, Status status) {
+        super(name, description);
+        this.status = status;
     }
 
-    public Integer getId() {
-        return id;
+    public Task withNewStatus(Status status) {
+        return new Task(
+                this.getName(),
+                this.getDescription(),
+                status
+        );
     }
 
-    public String getName() {
+    @Override
+    public Status getStatus() {
 
-        return name;
+        return status;
     }
 
-    public String getDescription() {
-        return description;
+    @Override
+    public Type getType() {
+
+        return Type.TASK;
     }
 
-    public void setId(int id) throws GetIdException {
-
-        throw new GetIdException();
+    @Override
+    public String toString() {
+        return getId() + "," +
+                getType() + "," +
+                getName() + "," +
+                getStatus() + "," +
+                getDescription() + ",";
     }
 
-    public abstract Status getStatus();
+    public static class ToCreateName {
+        private String name;
+        private String description;
 
-    public abstract Type getType();
+        public ToCreateName(String name, String description) {
 
-    public abstract String toString();
+            this.name = name;
+            this.description = description;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDescription() {
+            return this.description;
+        }
+    }
 }

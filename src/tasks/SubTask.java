@@ -2,47 +2,27 @@ package tasks;
 import enums.Status;
 import enums.Type;
 
-public class SubTask extends Task {
+public class SubTask extends Tasks {
     private final Status status;
-    private Epic epic;
-    private String description;
+    private int epicId;
 
-    public SubTask(int id, String name, String description, Status status, Epic epic) {
-        super(id, name, description);
+    public SubTask(String name, String description, Status status, int epicId) {
+        super(name, description);
         this.status = status;
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
     public SubTask withStatus(Status status) {
         return new SubTask(
-                this.getId(),
                 this.getName(),
                 this.getDescription(),
                 status,
-                this.epic
+                this.epicId
         );
     }
 
-    public static class ToCreateSubTaskName {
-        private String subTaskName;
-        private String description;
-
-        public ToCreateSubTaskName(String subTaskName, String description) {
-            this.subTaskName = subTaskName;
-            this.description = description;
-        }
-
-        public String getSubTaskName() {
-            return subTaskName;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
-
-    public Epic getEpic() {
-        return epic;
+    public int getEpicId() {
+        return epicId;
     }
 
     @Override
@@ -55,17 +35,13 @@ public class SubTask extends Task {
         return Type.SUBTASK;
     }
 
-    public Epic getEpicName() {
-        return epic;
-    }
-
     @Override
     public String toString() {
         return getId() + "," +
-                Type.SUBTASK + "," +
+                getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
                 getDescription() + "," +
-                epic.getId() + ",";
+                getEpicId() + ",";
     }
 }

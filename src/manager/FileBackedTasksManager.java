@@ -1,11 +1,12 @@
 package manager;
 
+import enums.Status;
 import exception.FileBackedException;
 import manager.hisory.InMemoryHistoryManager;
 import tasks.Epic;
-import tasks.SingleTask;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.Tasks;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -23,26 +24,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void saveNewTask(SingleTask.ToCreateName singleTaskToCreateName) {
-        super.saveNewTask(singleTaskToCreateName);
+    public int addNewTask(Task task) {
+        super.addNewTask(task);
         save();
-
+        return task.getId();
     }
 
     @Override
-    public void saveNewEpicTask(Epic.ToCreateEpicTaskName epicToCreateEpicTaskName) {
-        super.saveNewEpicTask(epicToCreateEpicTaskName);
+    public int addNewEpicTask(Epic epic) {
+        super.addNewEpicTask(epic);
+        save();
+        return epic.getId();
+    }
+
+    @Override
+    public void addNewSubTask(SubTask subTask) {
+        super.addNewSubTask(subTask);
         save();
     }
 
     @Override
-    public void saveNewSubTask(SubTask.ToCreateSubTaskName subToCreateSubTaskName, int epicId) {
-        super.saveNewSubTask(subToCreateSubTaskName, epicId);
-        save();
-    }
-
-    @Override
-    public Task getTaskById(int id) {
+    public Tasks getTaskById(int id) {
         super.inMemoryHistoryManager.add(taskById.get(id));
         save();
         return super.getTaskById(id);
@@ -55,8 +57,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(int id, Task task) {
-        super.updateTask(id, task);
+    public void updateTask(int id, Tasks tasks) {
+        super.updateTask(id, tasks);
         save();
     }
 
@@ -67,8 +69,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateStatusTask(Task task) {
-        super.updateStatusTask(task);
+    public void updateStatusTask(Tasks tasks) {
+        super.updateStatusTask(tasks);
         save();
     }
 
@@ -83,8 +85,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (Writer writer = new FileWriter(path.toFile(), Charset.forName(
                 "CP1251"), false)) {
             writer.write("id,type,name,status,description,epic\n");
-            for (Task task : taskById.values()) {
-                writer.write(task.toString() + "\n");
+            for (Tasks tasks : taskById.values()) {
+                writer.write(tasks.toString() + "\n");
             }
             if (!inMemoryHistoryManager.isEmpty()) {
                 writer.write("\n" + historyToString(getHistory()));
@@ -97,19 +99,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void fromString(String value) {
         String[] task = value.split(",");
         switch (task[1]) {
-            case "TASK" -> saveNewTask(new SingleTask.ToCreateName(task[2], task[4]));
-            case "EPIC" -> saveNewEpicTask(new Epic.ToCreateEpicTaskName(task[2], task[4]));
+            case "TASK" -> addNewTask(new Task(task[2], task[4], Status.valueOf(task[3])));
+            case "EPIC" -> addNewEpicTask(new Epic(task[2], task[4], Status.valueOf(task[3])));
             case "SUBTASK" -> {
                 int id = Integer.parseInt(task[5]);
-                saveNewSubTask(new SubTask.ToCreateSubTaskName(task[2], task[4]), id);
+                addNewSubTask(new SubTask(task[2], task[4], Status.valueOf(task[3]), id));
             }
             default -> System.out.println("Отсутствует тип задачи!");
         }
     }
 
-    public static String historyToString(List<Task> history) {
+    public static String historyToString(List<Tasks> history) {
 
-        return history.stream().map(Task::getId).map(String::valueOf).collect(Collectors.joining(","));
+        return history.stream().map(Tasks::getId).map(String::valueOf).collect(Collectors.joining(","));
     }
 
 
@@ -145,10 +147,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.backedTaskManager(Paths.get("Save_Manager.csv"));
 
-        taskManager.saveNewTask(new SingleTask.ToCreateName("Переезд", "Погрузка всех вещей"));
-        taskManager.saveNewEpicTask(new Epic.ToCreateEpicTaskName("Покупки", "Список продуктов"));
-        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка мебели", "Погрузить диван и шкафы"), 1);
-        taskManager.saveNewSubTask(new SubTask.ToCreateSubTaskName("Погрузка вещей", "Погрузить одежду и ковры"), 1);
+        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW));
+        taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));
+        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,  1));
+        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW, 1));
 
         System.out.println(taskManager.getTaskById(0));
         System.out.println(taskManager.getTaskById(2));

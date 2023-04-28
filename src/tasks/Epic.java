@@ -6,30 +6,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Epic extends Task {
+public class Epic extends Tasks {
     private final List<SubTask> subtasks;
     private final Status status;
 
-    public Epic(int id, String name, String description, Status status) {
-        super(id, name, description);
+    public Epic(String name, String description, Status status) {
+        super(name, description);
         this.subtasks = new ArrayList<>();
         this.status = status;
     }
 
     public Epic withNewStatus(Status status) {
         return new Epic(
-                this.getId(),
                 this.getName(),
                 this.getDescription(),
                 status
         );
     }
 
-    public void removeTask(Task Task) {
+    public void removeTask(Tasks Tasks) {
         Iterator<SubTask> iterator = subtasks.iterator();
         while (iterator.hasNext()) {
             SubTask count = iterator.next();
-            if (Task.getName() == count.getName()) {
+            if (Tasks.getName() == count.getName()) {
                 iterator.remove();
             }
         }
@@ -72,7 +71,7 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return  getId() + "," +
-                Type.EPIC + "," +
+                getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
                 getDescription() + ",";
