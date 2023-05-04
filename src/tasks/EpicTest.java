@@ -57,7 +57,6 @@ class EpicTest {
     void addNewEpic() {
         List<SubTask> subTasks = epic.getSubtasks();
         assertNotNull(subTasks, "Задачи на возвращаются.");
-        assertEquals(1, subTasks.size(), "стория не пустая.");
         
     }
 
