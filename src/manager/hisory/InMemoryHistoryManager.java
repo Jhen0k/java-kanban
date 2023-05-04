@@ -1,28 +1,28 @@
 package manager.hisory;
 
-import tasks.Task;
+import tasks.Tasks;
 
 import java.util.LinkedList;
 
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final CustomLinkedList<Task> historyTask = new CustomLinkedList<>();
-    private final HashMap<Integer, Node<Task>> map = new HashMap<>();
+    private final CustomLinkedList<Tasks> historyTask = new CustomLinkedList<>();
+    private final HashMap<Integer, Node<Tasks>> map = new HashMap<>();
 
     public InMemoryHistoryManager() {  // Конструктор
     }
 
     @Override
-    public void add(Task task) {
-        if (!map.containsKey(task.getId())) {
-            Node<Task> node = historyTask.linkLast(task);
-            map.put(task.getId(), node);
+    public void add(Tasks tasks) {
+        if (!map.containsKey(tasks.getId())) {
+            Node<Tasks> node = historyTask.linkLast(tasks);
+            map.put(tasks.getId(), node);
         } else {
-            historyTask.removeNode(map.get(task.getId()));
-            map.remove(task.getId());
-            Node<Task> node = historyTask.linkLast(task);
-            map.put(task.getId(), node);
+            historyTask.removeNode(map.get(tasks.getId()));
+            map.remove(tasks.getId());
+            Node<Tasks> node = historyTask.linkLast(tasks);
+            map.put(tasks.getId(), node);
         }
     }
 
@@ -33,7 +33,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public List<Task> getHistory() {
+    public List<Tasks> getHistory() {
         if (historyTask.size == 0) {
             return null;
         }
