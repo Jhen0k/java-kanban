@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a151add-c4e0-4908-9a67-db9cf63178d1" name="Changes" comment="feat: &quot;ТЗ 5, проверка гит2&quot;">
+    <list default="true" id="5a151add-c4e0-4908-9a67-db9cf63178d1" name="Changes" comment="feat: &quot;ТЗ 5, проверка гит3&quot;">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/java-kanban/tasks/EpicTest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/java-kanban/tasks/EpicTest.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tasks/EpicTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/EpicTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,9 +61,9 @@
     &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/evgeny/Work/dev/java-kanban&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.appearance&quot;
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;android.project.structure&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -211,7 +213,21 @@
       <option name="project" value="LOCAL" />
       <updated>1683199763637</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: &quot;ТЗ 5, проверка гит3&quot;">
+      <created>1683199862978</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1683199862978</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat: &quot;ТЗ 5, проверка гит3&quot;">
+      <created>1683199915750</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1683199915750</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -231,7 +247,8 @@
     <MESSAGE value="feat: &quot;ТЗ 5, сдать на первую итерацию&quot;" />
     <MESSAGE value="feat: &quot;ТЗ 5, проверка гит&quot;" />
     <MESSAGE value="feat: &quot;ТЗ 5, проверка гит2&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: &quot;ТЗ 5, проверка гит2&quot;" />
+    <MESSAGE value="feat: &quot;ТЗ 5, проверка гит3&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: &quot;ТЗ 5, проверка гит3&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
