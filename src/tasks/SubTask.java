@@ -1,23 +1,45 @@
 package tasks;
+
 import enums.Status;
 import enums.Type;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class SubTask extends Tasks {
     private final Status status;
     private int epicId;
 
     public SubTask(String name, String description, Status status, int epicId) {
-        super(name, description);
+        super(name, description, Instant.now(), 0);
+        this.status = status;
+        this.epicId = epicId;
+    }
+    public SubTask(String name, String description, Status status, int epicId, Instant startTime, int duration) {
+        super(name, description, startTime,duration);
+        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
         this.epicId = epicId;
     }
 
-    public SubTask withStatus(Status status) {
+    private SubTask(int id, String name, String description, Status status, int epicId, Instant startTime, int duration){
+        super(name, description, startTime,duration);
+        setId(id);
+        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        this.status = status;
+        this.epicId = epicId;
+    }
+
+
+    public SubTask withStatus(SubTask subTask ,Status status) {
         return new SubTask(
-                this.getName(),
-                this.getDescription(),
+                subTask.getId(),
+                subTask.getName(),
+                subTask.getDescription(),
                 status,
-                this.epicId
+                subTask.epicId,
+                subTask.getStartTime(),
+                subTask.getDuration()
         );
     }
 
@@ -37,11 +59,13 @@ public class SubTask extends Tasks {
 
     @Override
     public String toString() {
-        return getId() + "," +
+        return  getStartTime() + "," +
+                getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
                 getDescription() + "," +
-                getEpicId() + ",";
+                getEpicId() + "," +
+                getGetEndTime();
     }
 }

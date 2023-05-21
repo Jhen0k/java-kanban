@@ -1,23 +1,41 @@
 package tasks;
+
 import enums.Status;
 import enums.Type;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 
 public class Task extends Tasks {
     private final Status status;
+
     public Task(String name, String description, Status status) {
-        super(name, description);
+        super(name, description, Instant.now(), 0);
+        this.status = status;
+    }
+    public Task(String name, String description, Status status, Instant startTime, int duration) {
+        super(name, description, startTime, duration);
+        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
     }
 
-    public Task withNewStatus(Status status) {
+    private Task(int id, String name, String description, Status status, Instant startTime, int duration) {
+        super(name, description, startTime, duration);
+        setId(id);
+        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        this.status = status;
+    }
+    public Task withNewStatus(Task task ,Status status) {
         return new Task(
-                this.getName(),
-                this.getDescription(),
-                status
+                task.getId(),
+                task.getName(),
+                task.getDescription(),
+                status,
+                task.getStartTime(),
+                task.getDuration()
         );
     }
-
     @Override
     public Status getStatus() {
 
@@ -32,29 +50,12 @@ public class Task extends Tasks {
 
     @Override
     public String toString() {
-        return getId() + "," +
+        return  getStartTime() + "," +
+                getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
-                getDescription() + ",";
-    }
-
-    public static class ToCreateName {
-        private String name;
-        private String description;
-
-        public ToCreateName(String name, String description) {
-
-            this.name = name;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return this.description;
-        }
+                getDescription() + "," + "," +
+                getGetEndTime();
     }
 }

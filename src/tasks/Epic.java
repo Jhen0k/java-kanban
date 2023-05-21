@@ -1,7 +1,9 @@
 package tasks;
+
 import enums.Status;
 import enums.Type;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,16 +13,26 @@ public class Epic extends Tasks {
     private final Status status;
 
     public Epic(String name, String description, Status status) {
-        super(name, description);
+        super(name, description, Instant.now(), 0);
         this.subtasks = new ArrayList<>();
         this.status = status;
     }
 
-    public Epic withNewStatus(Status status) {
+    private Epic(int id, String name, String description, Status status, Instant startTime, int duration) {
+        super(name, description, startTime, duration);
+        setId(id);
+        this.subtasks = new ArrayList<>();
+        this.status = status;
+    }
+
+    public Epic withNewStatus(Epic epic ,Status status) {
         return new Epic(
-                this.getName(),
-                this.getDescription(),
-                status
+                epic.getId(),
+                epic.getName(),
+                epic.getDescription(),
+                status,
+                epic.subtasks.get(0).getStartTime(),
+                epic.getSumEndTime()
         );
     }
 
@@ -38,6 +50,14 @@ public class Epic extends Tasks {
         subtasks.clear();
     }
 
+    private int getSumEndTime() {
+        int sum = 0;
+        for (SubTask subTask : subtasks) {
+            sum = sum + subTask.getDuration();
+        }
+        return sum;
+    }
+
     public boolean viewTasksOnDone() {
         int count = 0;
         boolean statusEpic = false;
@@ -51,6 +71,16 @@ public class Epic extends Tasks {
             statusEpic = true;
         }
         return statusEpic;
+    }
+
+    public void withNewStatusSubTask(SubTask subTask) {
+        int count = 0;
+        for (SubTask subTask1 : subtasks) {
+            if (subTask.getId() == subTask1.getId()) {
+                subtasks.set(count, subTask);
+            }
+            count++;
+        }
     }
 
     public List<SubTask> getSubtasks() {
@@ -70,29 +100,13 @@ public class Epic extends Tasks {
 
     @Override
     public String toString() {
-        return  getId() + "," +
+        return  getStartTime() + "," +
+                getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
-                getDescription() + ",";
-    }
-
-    public static class ToCreateEpicTaskName {
-        private String epicName;
-        private String description;
-
-        public ToCreateEpicTaskName(String epicName, String description) {
-            this.epicName = epicName;
-            this.description = description;
-        }
-
-        public String getEpicName() {
-            return epicName;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+                getDescription() + "," + "," +
+                getGetEndTime();
     }
 
 }

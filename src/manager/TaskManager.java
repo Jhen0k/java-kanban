@@ -1,11 +1,12 @@
 package manager;
 
-import java.util.List;
-
+import enums.Status;
+import tasks.Epic;
+import tasks.SubTask;
 import tasks.Task;
 import tasks.Tasks;
-import tasks.SubTask;
-import tasks.Epic;
+
+import java.util.List;
 
 public interface TaskManager {
 
@@ -19,7 +20,7 @@ public interface TaskManager {
 
     void updateTask(int id, Tasks tasks);
 
-    void updateStatusTask(Tasks tasks);
+    void updateStatusTask(Tasks tasks, Status status);
 
     List<Tasks> getAllTasks();
 

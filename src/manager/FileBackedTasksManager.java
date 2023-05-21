@@ -12,6 +12,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,8 +70,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateStatusTask(Tasks tasks) {
-        super.updateStatusTask(tasks);
+    public void updateStatusTask(Tasks tasks, Status status) {
+        super.updateStatusTask(tasks, status);
         save();
     }
 
@@ -84,7 +85,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         try (Writer writer = new FileWriter(path.toFile(), Charset.forName(
                 "CP1251"), false)) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("startTime,id,type,name,status,description,epic,endTime\n");
             for (Tasks tasks : taskById.values()) {
                 writer.write(tasks.toString() + "\n");
             }
@@ -147,17 +148,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.backedTaskManager(Paths.get("Save_Manager.csv"));
 
-        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW));
+        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW, Instant.now(), 30));
         taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));
-        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,  1));
-        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW, 1));
+        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,  1, Instant.now(), 30));
+        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW, 1, Instant.now(), 45));
 
         System.out.println(taskManager.getTaskById(0));
         System.out.println(taskManager.getTaskById(2));
 
 
-        TaskManager taskManager2 = loadFromFile(Paths.get("Save_Manager.csv"));
-        System.out.println(taskManager2.getHistory());
+        //TaskManager taskManager2 = loadFromFile(Paths.get("Save_Manager.csv"));
+        //System.out.println(taskManager2.getHistory());
     }
 
 }
