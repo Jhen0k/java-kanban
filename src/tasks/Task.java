@@ -11,7 +11,7 @@ public class Task extends Tasks {
     private final Status status;
 
     public Task(String name, String description, Status status) {
-        super(name, description, Instant.now(), 0);
+        super(name, description);
         this.status = status;
     }
     public Task(String name, String description, Status status, Instant startTime, int duration) {
@@ -50,12 +50,10 @@ public class Task extends Tasks {
 
     @Override
     public String toString() {
-        return  getStartTime() + "," +
-                getId() + "," +
+        return  getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
-                getDescription() + "," + "," +
-                getGetEndTime();
+                getDescription();
     }
 }

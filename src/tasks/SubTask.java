@@ -11,7 +11,7 @@ public class SubTask extends Tasks {
     private int epicId;
 
     public SubTask(String name, String description, Status status, int epicId) {
-        super(name, description, Instant.now(), 0);
+        super(name, description);
         this.status = status;
         this.epicId = epicId;
     }
@@ -59,13 +59,11 @@ public class SubTask extends Tasks {
 
     @Override
     public String toString() {
-        return  getStartTime() + "," +
-                getId() + "," +
+        return  getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
                 getDescription() + "," +
-                getEpicId() + "," +
-                getGetEndTime();
+                getEpicId();
     }
 }

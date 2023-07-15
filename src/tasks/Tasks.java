@@ -25,7 +25,6 @@ public abstract class Tasks {
         this.getEndTime = startTime.plus(duration, ChronoUnit.MINUTES);
     }
 
-
     public Integer getId() {
         return id;
     }

@@ -16,7 +16,7 @@ public interface TaskManager {
 
     int addNewEpicTask(Epic epic);
 
-    void addNewSubTask(SubTask subTask);
+    int addNewSubTask(SubTask subTask);
 
     void updateTask(int id, Tasks tasks);
 
@@ -35,6 +35,10 @@ public interface TaskManager {
     void removeTask(int id);
 
     Tasks getTaskById(int id);
+
+    int sizeTaskById();
+
+    List<Tasks> getPrioritizedTasks();
 
     int getTaskByName(String name);
 }

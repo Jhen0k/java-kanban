@@ -3,7 +3,6 @@ package tasks;
 import enums.Status;
 import enums.Type;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,26 +12,25 @@ public class Epic extends Tasks {
     private final Status status;
 
     public Epic(String name, String description, Status status) {
-        super(name, description, Instant.now(), 0);
+        super(name, description);
         this.subtasks = new ArrayList<>();
         this.status = status;
     }
 
-    private Epic(int id, String name, String description, Status status, Instant startTime, int duration) {
-        super(name, description, startTime, duration);
+    private Epic(int id, String name, String description, Status status, List<SubTask> subtasks) {
+        super(name, description);
         setId(id);
-        this.subtasks = new ArrayList<>();
+        this.subtasks = subtasks;
         this.status = status;
     }
 
-    public Epic withNewStatus(Epic epic ,Status status) {
+    public Epic withNewStatus(Epic epic, Status status) {
         return new Epic(
                 epic.getId(),
                 epic.getName(),
                 epic.getDescription(),
                 status,
-                epic.subtasks.get(0).getStartTime(),
-                epic.getSumEndTime()
+                epic.getSubtasks()
         );
     }
 
@@ -100,13 +98,11 @@ public class Epic extends Tasks {
 
     @Override
     public String toString() {
-        return  getStartTime() + "," +
-                getId() + "," +
+        return  getId() + "," +
                 getType() + "," +
                 getName() + "," +
                 getStatus() + "," +
-                getDescription() + "," + "," +
-                getGetEndTime();
+                getDescription();
     }
 
 }

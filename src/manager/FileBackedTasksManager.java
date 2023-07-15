@@ -9,11 +9,12 @@ import tasks.Task;
 import tasks.Tasks;
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -39,9 +40,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addNewSubTask(SubTask subTask) {
+    public int addNewSubTask(SubTask subTask) {
         super.addNewSubTask(subTask);
         save();
+        return subTask.getId();
     }
 
     @Override
@@ -49,6 +51,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         super.inMemoryHistoryManager.add(taskById.get(id));
         save();
         return super.getTaskById(id);
+    }
+
+    public int sizeTaskById() {
+       return super.taskById.size();
     }
 
     @Override
@@ -83,9 +89,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public void save() {
 
-        try (Writer writer = new FileWriter(path.toFile(), Charset.forName(
-                "CP1251"), false)) {
-            writer.write("startTime,id,type,name,status,description,epic,endTime\n");
+        try (Writer writer = new FileWriter(path.toFile(), StandardCharsets.UTF_8, false)) {
+            writer.write("id,type,name,status,description,epic\n");
             for (Tasks tasks : taskById.values()) {
                 writer.write(tasks.toString() + "\n");
             }
@@ -126,9 +131,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTasksManager loadFromFile(Path path) throws IOException {
-        FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.backedTaskManager(path);
-        Reader fileReader = new FileReader(path.toFile(), Charset.forName("CP1251"));
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new InMemoryHistoryManager(), path);
+        Reader fileReader = new FileReader(path.toFile(), StandardCharsets.UTF_8);
         BufferedReader br = new BufferedReader((fileReader));
+
         String task = br.lines().skip(1).collect(Collectors.joining(System.lineSeparator()));
         String[] tasksAndIdHistory = task.split("\n");
         for (String line : tasksAndIdHistory) {
@@ -145,20 +151,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
+
     public static void main(String[] args) throws IOException {
         TaskManager taskManager = Managers.backedTaskManager(Paths.get("Save_Manager.csv"));
 
-        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW, Instant.now(), 30));
-        taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));
-        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,  1, Instant.now(), 30));
-        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW, 1, Instant.now(), 45));
+        taskManager.addNewTask(new Task("Отъезд", "Погрузка всех вещей", Status.NEW));                     // 0
+        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW,                      // 1
+                Instant.parse("2023-06-30T16:01:00.00Z"), 30));
+        taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));                   // 2
+        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,    // 3
+                2, Instant.parse("2023-06-30T15:01:00.00Z"), 30));
+        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW,    // 4
+                2, Instant.parse("2023-06-30T15:31:00.00Z"), 45));
+        taskManager.addNewTask(new Task("Погрузка", "Погрузка всей мебели", Status.NEW,                    // 5
+                Instant.parse("2023-06-30T16:01:00.00Z"), 30));
 
-        System.out.println(taskManager.getTaskById(0));
-        System.out.println(taskManager.getTaskById(2));
+        System.out.println(taskManager.getTaskById(0).getStartTime());
+        System.out.println(taskManager.getTaskById(3).getStartTime());
 
 
-        //TaskManager taskManager2 = loadFromFile(Paths.get("Save_Manager.csv"));
-        //System.out.println(taskManager2.getHistory());
+        TaskManager taskManager2 = loadFromFile(Paths.get("Save_Manager.csv"));
+        System.out.println(taskManager.getPrioritizedTasks());
     }
 
 }
