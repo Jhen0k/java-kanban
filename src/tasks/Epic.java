@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Epic extends Tasks {
+public class Epic extends AbstractTasks {
     private final List<SubTask> subtasks;
     private final Status status;
 
@@ -34,11 +34,11 @@ public class Epic extends Tasks {
         );
     }
 
-    public void removeTask(Tasks Tasks) {
+    public void removeTask(AbstractTasks abstractTasks) {
         Iterator<SubTask> iterator = subtasks.iterator();
         while (iterator.hasNext()) {
             SubTask count = iterator.next();
-            if (Tasks.getName() == count.getName()) {
+            if (abstractTasks.getName().equals(count.getName())) {
                 iterator.remove();
             }
         }
@@ -47,21 +47,27 @@ public class Epic extends Tasks {
     public void clearTask() {
         subtasks.clear();
     }
+    public int getSumEndTime() {
 
-    private int getSumEndTime() {
         int sum = 0;
+
         for (SubTask subTask : subtasks) {
+
             sum = sum + subTask.getDuration();
+
         }
+
         return sum;
+
     }
+
 
     public boolean viewTasksOnDone() {
         int count = 0;
         boolean statusEpic = false;
         int size = subtasks.size();
         for (SubTask subTask : subtasks) {
-            if (Status.DONE.equals(subTask.getStatus())) {
+            if (Status.DONE == subTask.getStatus()) {
                 count++;
             }
         }
@@ -74,7 +80,7 @@ public class Epic extends Tasks {
     public void withNewStatusSubTask(SubTask subTask) {
         int count = 0;
         for (SubTask subTask1 : subtasks) {
-            if (subTask.getId() == subTask1.getId()) {
+            if (subTask.getId().equals(subTask1.getId())) {
                 subtasks.set(count, subTask);
             }
             count++;

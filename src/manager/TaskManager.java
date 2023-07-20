@@ -4,13 +4,13 @@ import enums.Status;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-import tasks.Tasks;
+import tasks.AbstractTasks;
 
 import java.util.List;
 
 public interface TaskManager {
 
-    List<Tasks> getHistory();
+    List<AbstractTasks> getHistory();
 
     int addNewTask(Task task);
 
@@ -18,11 +18,11 @@ public interface TaskManager {
 
     int addNewSubTask(SubTask subTask);
 
-    void updateTask(int id, Tasks tasks);
+    void updateTask(int id, AbstractTasks abstractTasks);
 
-    void updateStatusTask(Tasks tasks, Status status);
+    void updateStatusTask(AbstractTasks abstractTasks, Status status);
 
-    List<Tasks> getAllTasks();
+    List<AbstractTasks> getAllTasks();
 
     void printTask(int taskId);
 
@@ -34,11 +34,11 @@ public interface TaskManager {
 
     void removeTask(int id);
 
-    Tasks getTaskById(int id);
+    AbstractTasks getTaskById(int id);
 
     int sizeTaskById();
 
-    List<Tasks> getPrioritizedTasks();
+    List<AbstractTasks> getPrioritizedTasks();
 
-    int getTaskByName(String name);
+    Integer getTaskByName(String name);
 }

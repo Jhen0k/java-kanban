@@ -6,9 +6,9 @@ import enums.Type;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-public class SubTask extends Tasks {
+public class SubTask extends AbstractTasks {
     private final Status status;
-    private int epicId;
+    private final int epicId;
 
     public SubTask(String name, String description, Status status, int epicId) {
         super(name, description);

@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 
-public class Task extends Tasks {
+public class Task extends AbstractTasks {
     private final Status status;
 
     public Task(String name, String description, Status status) {

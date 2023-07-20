@@ -3,13 +3,11 @@ package manager;
 import manager.hisory.HistoryManager;
 import manager.hisory.InMemoryHistoryManager;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.nio.file.Path;
 
 // Патер singleton
 // Сайт refactoring.guru
-public class Managers {
+public final class Managers {
     private static InMemoryHistoryManager inMemoryHistoryManager;
     private static InMemoryTaskManager inMemoryTaskManager;
     private static FileBackedTasksManager fileBackedTasksManager;

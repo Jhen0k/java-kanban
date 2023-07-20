@@ -6,7 +6,7 @@ import manager.hisory.InMemoryHistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-import tasks.Tasks;
+import tasks.AbstractTasks;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -15,28 +15,28 @@ import java.util.*;
 public class InMemoryTaskManager implements TaskManager {
 
     private final TaskIdGenerator taskIdGenerator;
-    protected final HashMap<Integer, Tasks> taskById;
+    protected final HashMap<Integer, AbstractTasks> taskById;
     protected final InMemoryHistoryManager inMemoryHistoryManager;
-    protected final Set<Tasks> prioritizedTasks;
-    protected final Set<Tasks> prioritizedTasksWithoutStartTime;
+    protected final Set<AbstractTasks> prioritizedTasks;
+    protected final Set<AbstractTasks> prioritizedAbstractTasksWithoutStartTime;
 
     public InMemoryTaskManager(InMemoryHistoryManager inMemoryHistoryManager) {
         this.inMemoryHistoryManager = inMemoryHistoryManager;
         this.taskIdGenerator = new TaskIdGenerator();
         this.taskById = new HashMap<>();
-        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(Tasks::getStartTime));
-        this.prioritizedTasksWithoutStartTime = new TreeSet<>(Comparator.comparing(Tasks::getId));
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(AbstractTasks::getStartTime));
+        this.prioritizedAbstractTasksWithoutStartTime = new TreeSet<>(Comparator.comparing(AbstractTasks::getId));
     }
 
     @Override
-    public List<Tasks> getHistory() {
-        List<Tasks> historyTasks = new ArrayList<>();
+    public List<AbstractTasks> getHistory() {
+        List<AbstractTasks> historyTasks = new ArrayList<>();
         if (inMemoryHistoryManager.getHistory() == null) {
-            return null;
+            return List.of();
         } else {
-            for (Tasks tasks : inMemoryHistoryManager.getHistory()) {
-                if (taskById.containsKey(tasks.getId())) {
-                    historyTasks.add(taskById.get(tasks.getId()));
+            for (AbstractTasks abstractTasks : inMemoryHistoryManager.getHistory()) {
+                if (taskById.containsKey(abstractTasks.getId())) {
+                    historyTasks.add(taskById.get(abstractTasks.getId()));
                 }
             }
         }
@@ -71,9 +71,11 @@ public class InMemoryTaskManager implements TaskManager {
 
         epic.getSubtasks().add(subTask);
 
-        if (subTask.getStartTime() != null) {
+
+        if (subTask.getStartTime() != null && subTask.getDuration() != 0) {
             epic.setStartTime(updateEpicTime(epic));
-            prioritizedTasksWithoutStartTime.remove(epic);
+            epic.setDuration(epic.getSumEndTime());
+            prioritizedAbstractTasksWithoutStartTime.remove(epic);
         }
         taskById.put(epic.getId(), epic);
         sortTask(subTask);
@@ -81,38 +83,39 @@ public class InMemoryTaskManager implements TaskManager {
         return nextFreeId;
     }
 
-    private void sortTask(Tasks tasks) {
-        if (tasks.getStartTime() != null) {
-            if (!prioritizedTasks.contains(tasks)) {
-                prioritizedTasks.add(tasks);
+    private void sortTask(AbstractTasks abstractTasks) {
+        if (abstractTasks.getStartTime() != null) {
+            if (!prioritizedTasks.contains(abstractTasks)) {
+                prioritizedTasks.add(abstractTasks);
             }
         } else {
-            prioritizedTasksWithoutStartTime.add(tasks);
+            prioritizedAbstractTasksWithoutStartTime.add(abstractTasks);
         }
     }
 
     @Override
-    public void updateTask(int id, Tasks tasks) {
-        taskById.put(id, tasks);
+    public void updateTask(int id, AbstractTasks abstractTasks) {
+        taskById.put(id, abstractTasks);
     }
 
     @Override
-    public void updateStatusTask(Tasks tasks, Status status) {
-        Type type = tasks.getType();
-        if (!Type.SUBTASK.equals(type)) {
-            Task task = (Task) tasks;
-            taskById.put(tasks.getId(), task.withNewStatus(task, status));
+    public void updateStatusTask(AbstractTasks abstractTasks, Status status) {
+        Type type = abstractTasks.getType();
+        if (Type.SUBTASK != type) {
+            Task task = (Task) abstractTasks;
+            taskById.put(abstractTasks.getId(), task.withNewStatus(task, status));
         } else {
-            updateEpicStatus((SubTask) tasks, status);
+            updateEpicStatus((SubTask) abstractTasks, status);
         }
     }
 
-    private Instant updateEpicTime(Epic epic) {
+    private static Instant updateEpicTime(Epic epic) {
         Instant startTime = null;
         for (SubTask subTask : epic.getSubtasks()) {
             if (startTime == null) {
                 startTime = subTask.getStartTime();
-            } else if (subTask.getStartTime() != null && startTime.compareTo(subTask.getStartTime()) > 0) {
+            }
+            if (startTime.compareTo(subTask.getStartTime()) > 0) {
                 startTime = subTask.getStartTime();
             }
         }
@@ -125,19 +128,20 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = (Epic) taskById.get(id);
         epic.withNewStatusSubTask((SubTask) taskById.get(subTask.getId()));
 
-        if (Status.IN_PROGRESS.equals(status)) {
+        if (Status.IN_PROGRESS == status) {
             taskById.put(epic.getId(), epic.withNewStatus(epic, status));
-        } else if (Status.DONE.equals(status)) {
+        } else if (Status.DONE == status) {
             if (epic.viewTasksOnDone()) {
                 taskById.put(epic.getId(), epic.withNewStatus(epic, status));
             } else {
                 taskById.put(epic.getId(), epic.withNewStatus(epic, Status.IN_PROGRESS));
             }
+        } else {
         }
     }
 
     @Override
-    public List<Tasks> getAllTasks() {
+    public List<AbstractTasks> getAllTasks() {
         return new ArrayList<>(this.taskById.values());
     }
 
@@ -150,15 +154,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void printAllTaskOneEpic(int epicId) {
         Epic epic = (Epic) taskById.get(epicId);
 
-        for (Tasks tasks : epic.getSubtasks()) {
-            System.out.println(tasks.getName());
+        for (AbstractTasks abstractTasks : epic.getSubtasks()) {
+            System.out.println(abstractTasks.getName());
         }
     }
 
     @Override
     public void printListAllTasks() {
-        for (Tasks tasks : getAllTasks()) {
-            System.out.print(tasks.getName() + ", ");
+        for (AbstractTasks abstractTasks : getAllTasks()) {
+            System.out.print(abstractTasks.getName() + ", ");
         }
         System.out.print("\n");
     }
@@ -170,17 +174,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int id) {
-        if (Type.SUBTASK.equals(taskById.get(id).getType())) {
+        if (Type.SUBTASK == taskById.get(id).getType()) {
             taskById.remove(id);
-        } else if (Type.EPIC.equals(taskById.get(id).getType())) {
+        } else if (Type.EPIC == taskById.get(id).getType()) {
             Epic epic = (Epic) taskById.get(id);
             List<SubTask> tasks = epic.getSubtasks();
-            Iterator<Tasks> iterator = getAllTasks().iterator();
+            Iterator<AbstractTasks> iterator = getAllTasks().iterator();
             int count = 0;
             while (iterator.hasNext()) {
-                Tasks task = iterator.next();
-                for (Tasks tasks1 : tasks) {
-                    if (task.getName().equals(tasks1.getName())) {
+                AbstractTasks task = iterator.next();
+                for (AbstractTasks abstractTasks1 : tasks) {
+                    if (task.getName().equals(abstractTasks1.getName())) {
                         taskById.remove(count);
                         inMemoryHistoryManager.remove(count);
                     }
@@ -196,31 +200,33 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public int getTaskByName(String name) {
+    public Integer getTaskByName(String name) {
         Optional<Integer> result =
                 taskById.entrySet().stream().filter(entry -> name.equals(entry.getValue().getName()))
                         .map(Map.Entry::getKey).findFirst();
-        return result.get();
+
+        return result.orElse(null);
     }
 
     @Override
-    public Tasks getTaskById(int id) {
+    public AbstractTasks getTaskById(int id) {
         if (taskById.containsKey(id)) {
             inMemoryHistoryManager.add(taskById.get(id));
             return taskById.get(id);
         } else {
-           return null;
+            return null;
         }
     }
 
     public int sizeTaskById() {
         return taskById.size();
     }
+
     @Override
-    public List<Tasks> getPrioritizedTasks() {
-        List<Tasks> tasks = new ArrayList<>();
+    public List<AbstractTasks> getPrioritizedTasks() {
+        List<AbstractTasks> tasks = new ArrayList<>();
         tasks.addAll(prioritizedTasks);
-        tasks.addAll(prioritizedTasksWithoutStartTime);
+        tasks.addAll(prioritizedAbstractTasksWithoutStartTime);
         return tasks;
     }
 
