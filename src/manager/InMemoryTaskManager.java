@@ -1,7 +1,7 @@
 package manager;
 
-import enums.Status;
-import enums.Type;
+import tasks.enums.Status;
+import tasks.enums.Type;
 import manager.hisory.InMemoryHistoryManager;
 import tasks.Epic;
 import tasks.SubTask;
@@ -44,6 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
         return Collections.unmodifiableList(historyTasks);
     }
 
+    @Override
     public int addNewTask(Task task) {
         int nextFreeId = taskIdGenerator.getNextFreeId();
         task.setId(nextFreeId);
@@ -68,9 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         taskById.put(subTask.getId(), subTask);
         Epic epic = (Epic) taskById.get(subTask.getEpicId());
-
         epic.getSubtasks().add(subTask);
-
 
         if (subTask.getStartTime() != null && subTask.getDuration() != 0) {
             epic.setStartTime(updateEpicTime(epic));
@@ -115,8 +114,10 @@ public class InMemoryTaskManager implements TaskManager {
             if (startTime == null) {
                 startTime = subTask.getStartTime();
             }
-            if (startTime.compareTo(subTask.getStartTime()) > 0) {
-                startTime = subTask.getStartTime();
+            if (subTask.getStartTime() != null) {
+                if (startTime.compareTo(subTask.getStartTime()) > 0) {
+                    startTime = subTask.getStartTime();
+                }
             }
         }
         return startTime.minus(1, ChronoUnit.MILLIS);
@@ -141,39 +142,49 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
+    public List<AbstractTasks> getAllTask() {
+        return new ArrayList<>(taskById.values()).stream().filter(task -> task.getType().equals(Type.TASK)).toList();
+    }
+
+    @Override
+    public List<AbstractTasks> getAllEpic() {
+        return new ArrayList<>(taskById.values()).stream().filter(task -> task.getType().equals(Type.EPIC)).toList();
+    }
+
+    @Override
+    public List<AbstractTasks> getAllSubtask() {
+        return new ArrayList<>(taskById.values()).stream().filter(task -> task.getType().equals(Type.SUBTASK)).toList();
+    }
+
+    @Override
     public List<AbstractTasks> getAllTasks() {
+        if (taskById.isEmpty()) {
+            return new ArrayList<>();
+        }
         return new ArrayList<>(this.taskById.values());
     }
-
     @Override
-    public void printTask(int taskId) {
-        System.out.println(taskById.get(taskId).getName());
-    }
-
-    @Override
-    public void printAllTaskOneEpic(int epicId) {
+    public List<SubTask> getAllTaskOneEpic(int epicId) {
         Epic epic = (Epic) taskById.get(epicId);
-
-        for (AbstractTasks abstractTasks : epic.getSubtasks()) {
-            System.out.println(abstractTasks.getName());
+        System.out.println(epic.toString());
+        List<SubTask> tasks = epic.getSubtasks();
+        System.out.println(tasks.size());
+        return new ArrayList<>(epic.getSubtasks());
+    }
+    @Override
+    public boolean clearAllTask() {
+        if (!taskById.isEmpty()) {
+            taskById.clear();
+            taskIdGenerator.removeNextFreeId();
+            return true;
+        } else {
+            System.out.println("Удалить не получиться, список пустой.");
         }
+        return false;
     }
 
     @Override
-    public void printListAllTasks() {
-        for (AbstractTasks abstractTasks : getAllTasks()) {
-            System.out.print(abstractTasks.getName() + ", ");
-        }
-        System.out.print("\n");
-    }
-
-    @Override
-    public void clearAllTask() {
-        taskById.clear();
-    }
-
-    @Override
-    public void removeTask(int id) {
+    public boolean removeTask(int id) {
         if (Type.SUBTASK == taskById.get(id).getType()) {
             taskById.remove(id);
         } else if (Type.EPIC == taskById.get(id).getType()) {
@@ -197,6 +208,7 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             taskById.remove(id);
         }
+        return taskById.containsKey(id);
     }
 
     @Override
@@ -235,6 +247,10 @@ public class InMemoryTaskManager implements TaskManager {
 
         public int getNextFreeId() {
             return nextFreeId++;
+        }
+
+        public void removeNextFreeId() {
+            nextFreeId = 0;
         }
     }
 }

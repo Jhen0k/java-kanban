@@ -1,15 +1,17 @@
 package tasks;
 
-import enums.Status;
-import enums.Type;
+import tasks.enums.Status;
+import tasks.enums.Type;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class Epic extends AbstractTasks {
-    private final List<SubTask> subtasks;
-    private final Status status;
+    private List<SubTask> subtasks;
+    private Status status;
+
+    public Epic() {
+    }
 
     public Epic(String name, String description, Status status) {
         super(name, description);
@@ -35,13 +37,7 @@ public class Epic extends AbstractTasks {
     }
 
     public void removeTask(AbstractTasks abstractTasks) {
-        Iterator<SubTask> iterator = subtasks.iterator();
-        while (iterator.hasNext()) {
-            SubTask count = iterator.next();
-            if (abstractTasks.getName().equals(count.getName())) {
-                iterator.remove();
-            }
-        }
+        subtasks.removeIf(count -> abstractTasks.getName().equals(count.getName()));
     }
 
     public void clearTask() {
@@ -87,10 +83,17 @@ public class Epic extends AbstractTasks {
         }
     }
 
-    public List<SubTask> getSubtasks() {
-        return subtasks;
+    public void setSubtasks(List<SubTask> subtasks) {
+        this.subtasks = subtasks;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public List<SubTask> getSubtasks() {
+        return this.subtasks;
+    }
 
     @Override
     public Status getStatus() {

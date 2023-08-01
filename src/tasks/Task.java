@@ -1,14 +1,16 @@
 package tasks;
 
-import enums.Status;
-import enums.Type;
+import tasks.enums.Status;
+import tasks.enums.Type;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-
 public class Task extends AbstractTasks {
-    private final Status status;
+    private Status status;
+
+    public Task() {
+    }
 
     public Task(String name, String description, Status status) {
         super(name, description);
@@ -16,14 +18,14 @@ public class Task extends AbstractTasks {
     }
     public Task(String name, String description, Status status, Instant startTime, int duration) {
         super(name, description, startTime, duration);
-        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
     }
 
     private Task(int id, String name, String description, Status status, Instant startTime, int duration) {
         super(name, description, startTime, duration);
         setId(id);
-        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
     }
     public Task withNewStatus(Task task ,Status status) {
@@ -36,6 +38,11 @@ public class Task extends AbstractTasks {
                 task.getDuration()
         );
     }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     @Override
     public Status getStatus() {
 

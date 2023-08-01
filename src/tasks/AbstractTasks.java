@@ -1,29 +1,33 @@
 package tasks;
 
-import enums.Status;
-import enums.Type;
 import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
+import tasks.enums.Status;
+import tasks.enums.Type;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 public abstract class AbstractTasks implements EngineExecutionContext {
     private int id;
-    private final String name;
-    private final String description;
+    private String name;
+    private String description;
     private Instant startTime;
     private int duration;
-    private Instant getEndTime;
+    private Instant endTime;
+
+    public AbstractTasks() {
+    }
     protected AbstractTasks(String name, String description) {
         this.name = name;
         this.description = description;
     }
+
     protected AbstractTasks(String name, String description, Instant startTime, int duration) {
         this.name = name;
         this.description = description;
         this.startTime = startTime;
         this.duration = duration;
-        this.getEndTime = startTime.plus(duration, ChronoUnit.MINUTES);
+        this.endTime = startTime.plus(duration, ChronoUnit.MINUTES);
     }
 
     public Integer getId() {
@@ -46,20 +50,29 @@ public abstract class AbstractTasks implements EngineExecutionContext {
         return duration;
     }
 
-    public Instant getGetEndTime() {
-        return getEndTime;
+    public Instant getEndTime() {
+        return endTime;
     }
 
     public final void setId(int id){
         this.id = id;
     }
 
+    public final void setName(String name) {
+        this.name = name;
+    }
+
+    public final void setDescription(String description) {
+        this.description = description;
+    }
+
+
     public final void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
 
-    public final void setGetEndTime(Instant getEndTime) {
-        this.getEndTime = getEndTime;
+    public final void setEndTime(Instant endTime) {
+        this.endTime = endTime;
     }
 
     public final void setDuration(int duration) {

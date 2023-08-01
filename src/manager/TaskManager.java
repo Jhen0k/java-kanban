@@ -1,16 +1,14 @@
 package manager;
 
-import enums.Status;
+import tasks.AbstractTasks;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-import tasks.AbstractTasks;
+import tasks.enums.Status;
 
 import java.util.List;
 
 public interface TaskManager {
-
-    List<AbstractTasks> getHistory();
 
     int addNewTask(Task task);
 
@@ -21,18 +19,18 @@ public interface TaskManager {
     void updateTask(int id, AbstractTasks abstractTasks);
 
     void updateStatusTask(AbstractTasks abstractTasks, Status status);
+    List<AbstractTasks> getAllTask();
+
+    List<AbstractTasks> getAllEpic();
+
+    List<AbstractTasks> getAllSubtask();
 
     List<AbstractTasks> getAllTasks();
+    List<SubTask> getAllTaskOneEpic(int epicId);
+    List<AbstractTasks> getHistory();
+    boolean clearAllTask();
 
-    void printTask(int taskId);
-
-    void printAllTaskOneEpic(int epicId);
-
-    void printListAllTasks();
-
-    void clearAllTask();
-
-    void removeTask(int id);
+    boolean removeTask(int id);
 
     AbstractTasks getTaskById(int id);
 

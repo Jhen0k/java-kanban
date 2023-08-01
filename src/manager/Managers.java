@@ -1,7 +1,9 @@
 package manager;
 
+import manager.file.FileBackedTasksManager;
 import manager.hisory.HistoryManager;
 import manager.hisory.InMemoryHistoryManager;
+import manager.http.HttpTaskManager;
 
 import java.nio.file.Path;
 
@@ -9,7 +11,7 @@ import java.nio.file.Path;
 // Сайт refactoring.guru
 public final class Managers {
     private static InMemoryHistoryManager inMemoryHistoryManager;
-    private static InMemoryTaskManager inMemoryTaskManager;
+    private static HttpTaskManager httpTaskManager;
     private static FileBackedTasksManager fileBackedTasksManager;
 
     private Managers() {
@@ -24,10 +26,10 @@ public final class Managers {
     }
 
     public static TaskManager getDefault() {
-        if (inMemoryTaskManager == null) {
-            inMemoryTaskManager = new InMemoryTaskManager((InMemoryHistoryManager) getDefaultHistory());
+        if (httpTaskManager == null) {
+            httpTaskManager = new HttpTaskManager();
         }
-        return inMemoryTaskManager;
+        return httpTaskManager;
     }
 
     public static TaskManager backedTaskManager(Path path) {

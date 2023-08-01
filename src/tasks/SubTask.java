@@ -1,14 +1,17 @@
 package tasks;
 
-import enums.Status;
-import enums.Type;
+import tasks.enums.Status;
+import tasks.enums.Type;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 public class SubTask extends AbstractTasks {
-    private final Status status;
-    private final int epicId;
+    private Status status;
+    private int epicId;
+
+    public SubTask() {
+    }
 
     public SubTask(String name, String description, Status status, int epicId) {
         super(name, description);
@@ -17,7 +20,7 @@ public class SubTask extends AbstractTasks {
     }
     public SubTask(String name, String description, Status status, int epicId, Instant startTime, int duration) {
         super(name, description, startTime,duration);
-        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
         this.epicId = epicId;
     }
@@ -25,7 +28,7 @@ public class SubTask extends AbstractTasks {
     private SubTask(int id, String name, String description, Status status, int epicId, Instant startTime, int duration){
         super(name, description, startTime,duration);
         setId(id);
-        setGetEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
+        setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
         this.status = status;
         this.epicId = epicId;
     }
@@ -37,14 +40,14 @@ public class SubTask extends AbstractTasks {
                 subTask.getName(),
                 subTask.getDescription(),
                 status,
-                subTask.epicId,
+                subTask.getEpicId(),
                 subTask.getStartTime(),
                 subTask.getDuration()
         );
     }
 
-    public int getEpicId() {
-        return epicId;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
@@ -56,6 +59,15 @@ public class SubTask extends AbstractTasks {
     public Type getType() {
         return Type.SUBTASK;
     }
+
+    public final void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public int getEpicId() {
+        return epicId;
+    }
+
 
     @Override
     public String toString() {

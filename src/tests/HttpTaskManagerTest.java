@@ -1,39 +1,102 @@
 package tests;
 
-import enums.Status;
-import exception.FileBackedException;
-import manager.FileBackedTasksManager;
-import manager.InMemoryTaskManager;
+import adapters.CustomGson;
+import com.google.gson.Gson;
+import kvserver.KVServer;
 import manager.Managers;
 import manager.TaskManager;
 import manager.hisory.HistoryManager;
-import manager.hisory.InMemoryHistoryManager;
+import manager.http.HttpTaskManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.HttpTaskServer;
 import tasks.AbstractTasks;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.enums.Status;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskTest {
+public class HttpTaskManagerTest {
+
+    private final int port = 8080;
+    private final String host = "localhost";
+    Gson gson = new CustomGson().customGson();
+    private KVServer kvServer;
+    private HttpTaskServer httpTaskServer;
     private TaskManager taskManager;
+
+    public HttpTaskManagerTest() {
+    }
 
     @BeforeEach
     void addNewManager() {
-        this.taskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        try {
+            kvServer = new KVServer();
+            kvServer.start();
+            httpTaskServer = new HttpTaskServer();
+            httpTaskServer.start();
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при сохранении состояния на KVServer");
+        }
+        this.taskManager = new HttpTaskManager();
+    }
+
+    @AfterEach
+    void stopServers()  {
+        httpTaskServer.stop();
+        kvServer.stop();
+    }
+
+    private void klientSave(String key, String value) {
+        try {
+            String uriString = String.format("http://%s:%d/%s", host, port, key);
+            HttpClient client = HttpClient.newHttpClient();
+            URI uri = new URI(uriString);
+            HttpRequest request = HttpRequest.newBuilder().uri(uri)
+                    .POST(HttpRequest.BodyPublishers.ofString(value)).build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при сохранении состояния на KVServer");
+        }
+    }
+
+    private String klientLoad(String key, String id) {
+        String responseStr;
+        try {
+            String uriString = String.format("http://%s:%d/%s/?id=%s", host, port, key, id);
+            HttpClient client = HttpClient.newHttpClient();
+            URI uri = new URI(uriString);
+            HttpRequest request = HttpRequest.newBuilder().uri(uri)
+                    .GET().build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            responseStr = response.body();
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при загрузке состояния из KVServer");
+        }
+        return responseStr;
+    }
+
+    @Test
+    void addNewJsonTask() throws IOException {
+        String task = "{\"name\":\"Заезд\",\"description\":\"Погрузка вещей.\",\"status\":\"NEW\"}";
+        Task taskGson = gson.fromJson(task, Task.class);
+        klientSave("tasks/task", task);
+        Task savedTask = gson.fromJson(klientLoad("tasks/task" ,"0"), Task.class);
+
+        assertNotNull(taskGson, "Задача не десериализована.");
+        assertNotNull(savedTask, "Задача не десериализована.");
     }
 
     @Test
@@ -184,13 +247,12 @@ public class TaskTest {
                 Instant.parse("2023-06-30T16:11:00.00Z"), 20));
         int taskId2 = taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW,
                 Instant.parse("2023-06-30T16:11:00.00Z"), 20));
-
+        System.out.println(taskManager.getAllTasks());
         assertNotNull(taskManager.getTaskById(taskId1), "Задача не найдена");
         assertNotNull(taskManager.getTaskById(taskId2), "Задача не найдена");
         assertEquals(2, taskManager.sizeTaskById(), "Задачи не добавлены");
 
         taskManager.removeTask(taskId1);
-
         assertNull(taskManager.getTaskById(taskId1), "Задача не удалена");
         assertEquals(1, taskManager.sizeTaskById(), "В списке есть задачи.");
     }
@@ -209,47 +271,5 @@ public class TaskTest {
         tasks = taskManager.getAllTasks();
 
         assertTrue(tasks.isEmpty(), "Задачи не удалены.");
-    }
-
-    @Test
-    void saveToFile() {
-        TaskManager taskManager = Managers.backedTaskManager(Paths.get("Save_Manager.csv"));
-        taskManager.clearAllTask();
-        int taskId1 = taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW,
-                Instant.parse("2023-06-30T16:11:00.00Z"), 20));
-        Task savedTask1 = (Task) taskManager.getTaskById(taskId1);
-
-
-        try (Reader fileReader = new FileReader("Save_Manager.csv", StandardCharsets.UTF_8)) {
-            BufferedReader br = new BufferedReader(fileReader);
-            String task = br.lines().skip(1).collect(Collectors.joining(System.lineSeparator()));
-            String[] tasksAndIdHistory = task.split("\n");
-            br.close();
-            assertNotNull(task, "Файл пустой");
-            assertEquals(savedTask1.toString(), tasksAndIdHistory[0], "Задачи не совпадают.");
-        } catch (IOException e) {
-            throw new FileBackedException(e.getMessage());
-        }
-    }
-
-    @Test
-    void loadFromFileTest() throws IOException {
-        Path path = Path.of("Save_Manager.csv");
-        TaskManager taskManager = FileBackedTasksManager.loadFromFile(path);
-        List<AbstractTasks> tasks = taskManager.getAllTasks();
-        Reader fileReader = new FileReader("Save_Manager.csv", StandardCharsets.UTF_8);
-        try(BufferedReader br = new BufferedReader(fileReader)) {
-            String task = br.lines().skip(1).collect(Collectors.joining(System.lineSeparator()));
-            fileReader.close();
-            br.close();
-            String[] tasksAndIdHistory = task.split("\n");
-
-            assertNotNull(taskManager, "Менеджер не вернулся.");
-            assertNotNull(tasks, "Задачи не возвращаются");
-            assertNotNull(taskManager.getHistory(), "История задач пустая");
-            assertEquals(tasksAndIdHistory[0], taskManager.getTaskById(0).toString(), "Задачи не одинаковые");
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
     }
 }
