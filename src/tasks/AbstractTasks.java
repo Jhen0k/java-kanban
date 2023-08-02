@@ -15,7 +15,7 @@ public abstract class AbstractTasks implements EngineExecutionContext {
     private int duration;
     private Instant endTime;
 
-    public AbstractTasks() {
+    protected AbstractTasks() {
     }
     protected AbstractTasks(String name, String description) {
         this.name = name;

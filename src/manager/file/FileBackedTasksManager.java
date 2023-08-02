@@ -141,22 +141,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static FileBackedTasksManager loadFromFile(Path path) throws IOException {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(new InMemoryHistoryManager(), path);
         Reader fileReader = new FileReader(path.toFile(), StandardCharsets.UTF_8);
-        BufferedReader br = new BufferedReader((fileReader));
+        try (BufferedReader br = new BufferedReader((fileReader))) {
 
-        String task = br.lines().skip(1).collect(Collectors.joining(System.lineSeparator()));
-        String[] tasksAndIdHistory = task.split("\n");
-        for (String line : tasksAndIdHistory) {
-            if (line.length() > 10) {
-                fileBackedTasksManager.fromString(line);
-            } else {
-                break;
+            String task = br.lines().skip(1).collect(Collectors.joining(System.lineSeparator()));
+            String[] tasksAndIdHistory = task.split("\n");
+            for (String line : tasksAndIdHistory) {
+                if (line.length() > 10) {
+                    fileBackedTasksManager.fromString(line);
+                } else {
+                    break;
+                }
             }
-        }
-        if (tasksAndIdHistory[tasksAndIdHistory.length - 1].length() < 10) {
-            for (int id : historyFromString(tasksAndIdHistory[tasksAndIdHistory.length - 1])) {
-                fileBackedTasksManager.getTaskById(id);
+            if (tasksAndIdHistory[tasksAndIdHistory.length - 1].length() < 10) {
+                for (int id : historyFromString(tasksAndIdHistory[tasksAndIdHistory.length - 1])) {
+                    fileBackedTasksManager.getTaskById(id);
+                }
             }
-            br.close();
         }
         return fileBackedTasksManager;
     }
@@ -165,15 +165,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
         TaskManager taskManager = Managers.backedTaskManager(Paths.get("Save_Manager.csv"));
 
-        taskManager.addNewTask(new Task("Отъезд", "Погрузка всех вещей", Status.NEW));                     // 0
-        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW,                      // 1
+        taskManager.addNewTask(new Task("Отъезд", "Погрузка всех вещей", Status.NEW));
+        taskManager.addNewTask(new Task("Переезд", "Погрузка всех вещей", Status.NEW,
                 Instant.parse("2023-06-30T16:01:00.00Z"), 30));
-        taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));                   // 2
-        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,    // 3
+        taskManager.addNewEpicTask(new Epic("Покупки", "Список продуктов", Status.NEW));
+        taskManager.addNewSubTask(new SubTask("Погрузка мебели", "Погрузить диван и шкафы", Status.NEW,
                 2));
-        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW,    // 4
+        taskManager.addNewSubTask(new SubTask("Погрузка вещей", "Погрузить одежду и ковры", Status.NEW,
                 2, Instant.parse("2023-06-30T15:31:00.00Z"), 45));
-        taskManager.addNewTask(new Task("Погрузка", "Погрузка всей мебели", Status.NEW,                    // 5
+        taskManager.addNewTask(new Task("Погрузка", "Погрузка всей мебели", Status.NEW,
                 Instant.parse("2023-06-30T16:01:00.00Z"), 30));
 
         taskManager.getTaskById(0);
@@ -183,7 +183,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             System.out.println(taskManager2.getPrioritizedTasks());
             System.out.println(taskManager2.getHistory());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Ошибка при восстановлении менеджера. ");
         }
     }
 }

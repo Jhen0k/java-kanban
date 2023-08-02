@@ -18,6 +18,13 @@ public class SubTask extends AbstractTasks {
         this.status = status;
         this.epicId = epicId;
     }
+
+    public SubTask(int id ,String name, String description, Status status, int epicId) {
+        super(name, description);
+        setId(id);
+        this.status = status;
+        this.epicId = epicId;
+    }
     public SubTask(String name, String description, Status status, int epicId, Instant startTime, int duration) {
         super(name, description, startTime,duration);
         setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
@@ -35,6 +42,26 @@ public class SubTask extends AbstractTasks {
 
 
     public SubTask withStatus(SubTask subTask ,Status status) {
+        SubTask newSubTask;
+        if (subTask.getStartTime() == null&& subTask.getDuration() == 0) {
+            newSubTask = withNewStatusWithoutTime(subTask, status);
+        } else {
+            newSubTask = withNewStatusWithTime(subTask, status);
+        }
+        return newSubTask;
+    }
+
+    private SubTask withNewStatusWithoutTime(SubTask subTask ,Status status) {
+        return new SubTask(
+                subTask.getId(),
+                subTask.getName(),
+                subTask.getDescription(),
+                status,
+                subTask.getEpicId()
+        );
+    }
+
+    private SubTask withNewStatusWithTime(SubTask subTask ,Status status) {
         return new SubTask(
                 subTask.getId(),
                 subTask.getName(),

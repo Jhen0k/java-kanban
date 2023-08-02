@@ -28,7 +28,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         kvsKlient.saveState("save", task);
     }
 
-    public void load() {
+    public final void load() {
         if (body.isEmpty()) {
             System.out.println("Сохраненых задач нет!");
             return;

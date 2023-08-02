@@ -131,13 +131,13 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (Status.IN_PROGRESS == status) {
             taskById.put(epic.getId(), epic.withNewStatus(epic, status));
-        } else if (Status.DONE == status) {
+        }
+        if (Status.DONE == status) {
             if (epic.viewTasksOnDone()) {
                 taskById.put(epic.getId(), epic.withNewStatus(epic, status));
             } else {
                 taskById.put(epic.getId(), epic.withNewStatus(epic, Status.IN_PROGRESS));
             }
-        } else {
         }
     }
 
@@ -163,6 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return new ArrayList<>(this.taskById.values());
     }
+
     @Override
     public List<SubTask> getAllTaskOneEpic(int epicId) {
         Epic epic = (Epic) taskById.get(epicId);
@@ -171,10 +172,13 @@ public class InMemoryTaskManager implements TaskManager {
         System.out.println(tasks.size());
         return new ArrayList<>(epic.getSubtasks());
     }
+
     @Override
     public boolean clearAllTask() {
         if (!taskById.isEmpty()) {
             taskById.clear();
+            prioritizedAbstractTasksWithoutStartTime.clear();
+            prioritizedTasks.clear();
             taskIdGenerator.removeNextFreeId();
             return true;
         } else {
@@ -187,6 +191,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean removeTask(int id) {
         if (Type.SUBTASK == taskById.get(id).getType()) {
             taskById.remove(id);
+
         } else if (Type.EPIC == taskById.get(id).getType()) {
             Epic epic = (Epic) taskById.get(id);
             List<SubTask> tasks = epic.getSubtasks();

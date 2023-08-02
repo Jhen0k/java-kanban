@@ -16,6 +16,12 @@ public class Task extends AbstractTasks {
         super(name, description);
         this.status = status;
     }
+
+    public Task(int id ,String name, String description, Status status) {
+        super(name, description);
+        setId(id);
+        this.status = status;
+    }
     public Task(String name, String description, Status status, Instant startTime, int duration) {
         super(name, description, startTime, duration);
         setEndTime(startTime.plus(duration, ChronoUnit.MINUTES));
@@ -29,6 +35,25 @@ public class Task extends AbstractTasks {
         this.status = status;
     }
     public Task withNewStatus(Task task ,Status status) {
+        Task newTask;
+        if (task.getStartTime() == null&& task.getDuration() == 0) {
+            newTask = withNewStatusWithoutTime(task, status);
+        } else {
+            newTask = withNewStatusWithTime(task, status);
+        }
+        return newTask;
+    }
+
+    private Task withNewStatusWithoutTime(Task task, Status status) {
+        return new Task(
+                task.getId(),
+                task.getName(),
+                task.getDescription(),
+                status
+        );
+    }
+
+    private Task withNewStatusWithTime(Task task, Status status) {
         return new Task(
                 task.getId(),
                 task.getName(),

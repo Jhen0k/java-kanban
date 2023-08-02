@@ -46,10 +46,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
 
     public void remove(int id) {
+        if (!map.isEmpty()) {
+            historyTask.removeNode(map.get(id));
 
-        historyTask.removeNode(map.get(id));
-
-        map.remove(id);
+            map.remove(id);
+        }
 
     }
 

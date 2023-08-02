@@ -9,6 +9,7 @@ import manager.TaskManager;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.enums.Status;
 import tasks.enums.Type;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class HttpTaskServer {
         httpServer.createContext("/tasks/subtask", this::Subtask);
         httpServer.createContext("/tasks/subtask/epic", this::subtasksOneEpic);
         httpServer.createContext("/tasks/history", this::getHistory);
+        httpServer.createContext("/tasks/priority", this::getPrioritizedTask);
     }
 
     public static void main(String[] args) throws IOException {
@@ -64,6 +66,17 @@ public class HttpTaskServer {
         }
     }
 
+    private void getPrioritizedTask(HttpExchange exchange) throws IOException {
+        String[] requestPath = exchange.getRequestURI().getPath().split("/");
+        try {
+            if (requestPath[2].equals("priority")) {
+                writeResponse(exchange, gson.toJson(taskManager.getPrioritizedTasks()), 200);
+            }
+        } catch (IOException e) {
+            writeResponse(exchange, "Произошла ошибка при получении задач.", 404);
+        }
+    }
+
     private void task(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
         Endpoint endpoint = getEndpoint(exchange);
@@ -76,7 +89,24 @@ public class HttpTaskServer {
                     getTaskById(exchange, query);
                 }
             }
-            case POST -> addTask(exchange, Type.TASK);
+            case POST -> {
+                if (query == null) {
+                    addTask(exchange, Type.TASK);
+                } else {
+                    String idTask = query.split("&")[0].split("=")[1];
+                    String newStatus = query.split("&")[1].split("=")[1];
+                    Optional<Integer> id = getPostId(idTask);
+                    Optional<Status> status = getStatus(newStatus);
+                    if (id.isPresent() && status.isPresent()) {
+                        taskManager.updateStatusTask(taskManager.getTaskById(Integer.parseInt(idTask))
+                                , Status.valueOf(newStatus));
+                        writeResponse(exchange, "Статус задачи с id " + idTask + "изменен на статус: "
+                                + Status.valueOf(newStatus), 200);
+                    } else {
+                        writeResponse(exchange, "Не верно введен id или status", 400);
+                    }
+                }
+            }
             case DELETE -> {
                 if (query == null) {
                     taskManager.clearAllTask();
@@ -111,7 +141,22 @@ public class HttpTaskServer {
                     getTaskById(exchange, query);
                 }
             }
-            case POST -> addTask(exchange, Type.SUBTASK);
+            case POST -> {
+                if (query == null) {
+                    addTask(exchange, Type.SUBTASK);
+                } else {
+                    String idTask = query.split("&")[0].split("=")[1];
+                    String newStatus = query.split("&")[1].split("=")[1];
+                    Optional<Integer> id = getPostId(idTask);
+                    Optional<Status> status = getStatus(newStatus);
+                    if (id.isPresent() && status.isPresent()) {
+                        taskManager.updateStatusTask(taskManager.getTaskById(Integer.parseInt(idTask))
+                                , Status.valueOf(newStatus));
+                    } else {
+                        writeResponse(exchange, "Не верно введен id или status", 400);
+                    }
+                }
+            }
         }
     }
 
@@ -195,6 +240,13 @@ public class HttpTaskServer {
         } catch (NumberFormatException exception) {
             return Optional.empty();
         }
+    }
+
+    private Optional<Status> getStatus(String status) {
+        if (status.equals("NEW") || status.equals("IN_PROGRESS") || status.equals("DONE")) {
+            return Optional.of(Status.valueOf(status));
+        }
+        return Optional.empty();
     }
 
 
